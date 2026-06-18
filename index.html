@@ -538,8 +538,21 @@ function go(p){
 // ═══ UI HELPERS ═══
 function openDr(){document.getElementById('drawer').classList.add('open');document.getElementById('dov').classList.add('open');}
 function closeDr(){document.getElementById('drawer').classList.remove('open');document.getElementById('dov').classList.remove('open');}
-function openSh(id){document.getElementById(id).classList.add('open');}
-function closeSh(id){document.getElementById(id).classList.remove('open');}
+function openSh(id){
+  const ov=document.getElementById(id);
+  ov.classList.add('open');
+  const sheet=ov.querySelector('.sheet');
+  if(sheet){
+    sheet.style.transform='';
+    setTimeout(()=>{sheet.style.transform='none';},300);
+  }
+}
+function closeSh(id){
+  const ov=document.getElementById(id);
+  const sheet=ov.querySelector('.sheet');
+  if(sheet)sheet.style.transform='';
+  ov.classList.remove('open');
+}
 function conf(msg,cb,btn){
   document.getElementById('confMsg').textContent=msg;
   const b=document.getElementById('confOk');b.textContent=btn||'ОК';
@@ -888,56 +901,56 @@ function drawDoc(d){
   const accentColor=isSale?'#00B956':'#1976D2';
   const accentDark=isSale?'#00A04A':'#1565C0';
   const rowBg=isSale?'#F8FDF9':'#F0F4FF';
-  const D=2,W=640,PAD=36;
-  const HBAR=120,RH=d.items.length>1?54:70,SEP=28,FOOTER=isSale?70:60,BOT=24;
-  const H=HBAR+20+d.items.length*RH+SEP+FOOTER+BOT;
+  const D=2,W=680,PAD=38;
+  const HBAR=138,RH=d.items.length>1?64:80,SEP=30,FOOTER=isSale?82:72,BOT=26;
+  const H=HBAR+24+d.items.length*RH+SEP+FOOTER+BOT;
   cv.width=W*D;cv.height=H*D;cv.style.width='100%';cv.style.height='auto';
   const ctx=cv.getContext('2d');ctx.scale(D,D);
   // BG
-  ctx.fillStyle='#FFFFFF';rrr(ctx,0,0,W,H,20);ctx.fill();
+  ctx.fillStyle='#FFFFFF';rrr(ctx,0,0,W,H,22);ctx.fill();
   // Header gradient
   const grad=ctx.createLinearGradient(0,0,W,0);
   grad.addColorStop(0,accentColor);grad.addColorStop(1,accentDark);
-  ctx.fillStyle=grad;rrr(ctx,0,0,W,HBAR,20,true);ctx.fill();
+  ctx.fillStyle=grad;rrr(ctx,0,0,W,HBAR,22,true);ctx.fill();
   // Logo
-  ctx.fillStyle='rgba(255,255,255,0.7)';ctx.font='600 13px -apple-system,sans-serif';
-  ctx.textAlign='left';ctx.fillText('ОптомМаркет',PAD,28);
+  ctx.fillStyle='rgba(255,255,255,0.7)';ctx.font='700 15px -apple-system,sans-serif';
+  ctx.textAlign='left';ctx.fillText('ОптомМаркет',PAD,32);
   // Title
-  ctx.fillStyle='#fff';ctx.font='800 22px -apple-system,sans-serif';
-  ctx.fillText(isSale?'🧾 Чек продажи':d.type==='issue'?'📄 Выдача':d.type==='move'?'📄 Перемещение':'📄 Возврат',PAD,62);
+  ctx.fillStyle='#fff';ctx.font='800 27px -apple-system,sans-serif';
+  ctx.fillText(isSale?'🧾 Чек продажи':d.type==='issue'?'📄 Выдача':d.type==='move'?'📄 Перемещение':'📄 Возврат',PAD,72);
   // Right side: rcNum + date
-  ctx.fillStyle='rgba(255,255,255,0.85)';ctx.font='600 13px -apple-system,sans-serif';
-  ctx.textAlign='right';ctx.fillText(d.rcNum,W-PAD,34);ctx.fillText(d.date,W-PAD,56);
+  ctx.fillStyle='rgba(255,255,255,0.9)';ctx.font='700 16px -apple-system,sans-serif';
+  ctx.textAlign='right';ctx.fillText(d.rcNum,W-PAD,40);ctx.fillText(d.date,W-PAD,64);
   // Subtitle
-  ctx.fillStyle='rgba(255,255,255,0.8)';ctx.font='500 13px -apple-system,sans-serif';
+  ctx.fillStyle='rgba(255,255,255,0.85)';ctx.font='600 16px -apple-system,sans-serif';
   ctx.textAlign='left';
-  if(isSale)ctx.fillText(`Точка: ${d.pt} · ${d.items.length} позиц.`,PAD,90);
-  else ctx.fillText(`${d.from} → ${d.to}`,PAD,90);
+  if(isSale)ctx.fillText(`Точка: ${d.pt} · ${d.items.length} позиц.`,PAD,106);
+  else ctx.fillText(`${d.from} → ${d.to}`,PAD,106);
   // Items
-  let y=HBAR+28;
+  let y=HBAR+34;
   d.items.forEach((it,i)=>{
-    if(i%2===0){ctx.fillStyle=rowBg;ctx.fillRect(0,y-20,W,RH);}
-    ctx.fillStyle='#1A1A2E';ctx.font='700 15px -apple-system,sans-serif';ctx.textAlign='left';ctx.fillText(it.model,PAD,y);
-    ctx.fillStyle='#8888A0';ctx.font='500 12px -apple-system,sans-serif';
-    if(isSale)ctx.fillText(`${fmt(it.qty)} шт × ${fmt(it.px)} с.`,PAD,y+18);
-    else ctx.fillText(`${it.ptype} · ${fmt(it.qty)} шт`,PAD,y+18);
-    if(isSale){ctx.fillStyle=accentColor;ctx.font='800 16px -apple-system,sans-serif';ctx.textAlign='right';ctx.fillText(fmt(it.sum)+' с.',W-PAD,y+8);}
-    else{ctx.fillStyle=accentColor;ctx.font='800 18px -apple-system,sans-serif';ctx.textAlign='right';ctx.fillText(fmt(it.qty)+' шт',W-PAD,y+8);}
+    if(i%2===0){ctx.fillStyle=rowBg;ctx.fillRect(0,y-24,W,RH);}
+    ctx.fillStyle='#1A1A2E';ctx.font='800 19px -apple-system,sans-serif';ctx.textAlign='left';ctx.fillText(it.model,PAD,y);
+    ctx.fillStyle='#7A7A95';ctx.font='600 15px -apple-system,sans-serif';
+    if(isSale)ctx.fillText(`${fmt(it.qty)} шт × ${fmt(it.px)} с.`,PAD,y+22);
+    else ctx.fillText(`${it.ptype} · ${fmt(it.qty)} шт`,PAD,y+22);
+    if(isSale){ctx.fillStyle=accentColor;ctx.font='800 20px -apple-system,sans-serif';ctx.textAlign='right';ctx.fillText(fmt(it.sum)+' с.',W-PAD,y+10);}
+    else{ctx.fillStyle=accentColor;ctx.font='800 22px -apple-system,sans-serif';ctx.textAlign='right';ctx.fillText(fmt(it.qty)+' шт',W-PAD,y+10);}
     ctx.textAlign='left';y+=RH;
   });
   // Divider
-  ctx.strokeStyle='#E2E4EF';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(PAD,y+6);ctx.lineTo(W-PAD,y+6);ctx.stroke();y+=20;
+  ctx.strokeStyle='#E2E4EF';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(PAD,y+6);ctx.lineTo(W-PAD,y+6);ctx.stroke();y+=22;
   // Total block
-  ctx.fillStyle=accentColor;rrr(ctx,PAD-4,y-6,W-PAD*2+8,56,12);ctx.fill();
-  ctx.fillStyle='rgba(255,255,255,0.8)';ctx.font='600 13px -apple-system,sans-serif';
-  ctx.textAlign='left';ctx.fillText(isSale?'Итого к оплате':'Итого передано',PAD+12,y+16);
-  ctx.fillStyle='#fff';ctx.font='800 26px -apple-system,sans-serif';
-  ctx.textAlign='right';ctx.fillText(isSale?fmt(d.total)+' сомони':fmt(d.total)+' шт',W-PAD-12,y+20);y+=62;
+  ctx.fillStyle=accentColor;rrr(ctx,PAD-4,y-8,W-PAD*2+8,68,14);ctx.fill();
+  ctx.fillStyle='rgba(255,255,255,0.85)';ctx.font='700 16px -apple-system,sans-serif';
+  ctx.textAlign='left';ctx.fillText(isSale?'Итого к оплате':'Итого передано',PAD+14,y+20);
+  ctx.fillStyle='#fff';ctx.font='800 32px -apple-system,sans-serif';
+  ctx.textAlign='right';ctx.fillText(isSale?fmt(d.total)+' сомони':fmt(d.total)+' шт',W-PAD-14,y+26);y+=78;
   // Comment
-  if(d.cmt){ctx.fillStyle='#8888A0';ctx.font='500 12px -apple-system,sans-serif';ctx.textAlign='left';ctx.fillText('💬 '+d.cmt,PAD,y);y+=18;}
+  if(d.cmt){ctx.fillStyle='#7A7A95';ctx.font='600 14px -apple-system,sans-serif';ctx.textAlign='left';ctx.fillText('💬 '+d.cmt,PAD,y);y+=20;}
   // Footer
-  ctx.fillStyle='#C8C8DC';ctx.font='500 11px -apple-system,sans-serif';ctx.textAlign='center';
-  ctx.fillText(isSale?'Спасибо за покупку! · ОптомМаркет':'Документ сформирован · ОптомМаркет',W/2,H-12);
+  ctx.fillStyle='#B8B8CC';ctx.font='600 13px -apple-system,sans-serif';ctx.textAlign='center';
+  ctx.fillText(isSale?'Спасибо за покупку! · ОптомМаркет':'Документ сформирован · ОптомМаркет',W/2,H-14);
   ctx.textAlign='left';
 }
 function rrr(ctx,x,y,w,h,r,t){
@@ -1244,6 +1257,18 @@ function initDemo(){
   save();
 }
 // ═══ CLOUD SYNC (GitHub Gist) ═══
+async function pasteInto(id){
+  try{
+    const text=await navigator.clipboard.readText();
+    if(!text){toast('Буфер обмена пуст','err');return;}
+    const el=document.getElementById(id);
+    el.value=text.trim();
+    el.dispatchEvent(new Event('input',{bubbles:true}));
+    toast('Вставлено ✅');
+  }catch(e){
+    toast('Скопируйте текст и нажмите кнопку ещё раз','err');
+  }
+}
 const GH_TOKEN_KEY='omGhToken',GH_GIST_KEY='omGhGistId';
 function getGhToken(){return localStorage.getItem(GH_TOKEN_KEY)||'';}
 function getGistId(){return localStorage.getItem(GH_GIST_KEY)||'';}
@@ -1259,7 +1284,12 @@ function renderCloudSheet(){
         2. Поставь галочку <strong>gist</strong>, нажми «Generate token»<br>
         3. Скопируй токен (начинается с <code>ghp_</code>) и вставь ниже
       </div>
-      <div class="fg"><div class="fl">GitHub Token</div><input class="fc" id="ghTokenInput" placeholder="ghp_xxxxxxxxxxxx" autocomplete="off"></div>
+      <div class="fg"><div class="fl">GitHub Token</div>
+        <div style="display:flex;gap:8px">
+          <input class="fc" id="ghTokenInput" placeholder="ghp_xxxxxxxxxxxx" autocomplete="off" style="flex:1">
+          <button class="btn btn-b" onclick="pasteInto('ghTokenInput')" style="flex-shrink:0">📋 Вставить</button>
+        </div>
+      </div>
       <button class="btn btn-g btn-full" onclick="saveGhToken()">Сохранить токен</button>
     `;
   } else {
@@ -1269,7 +1299,10 @@ function renderCloudSheet(){
       <button class="btn btn-b btn-full" style="margin-top:10px" onclick="syncFromCloud()">⬇️ Загрузить из облака</button>
       <div class="div"></div>
       <div class="fg"><div class="fl">Gist ID (для подключения с другого устройства)</div>
-        <input class="fc" id="gistIdInput" value="${gistId}" placeholder="Вставь ID если синхронизируешь с другого устройства">
+        <div style="display:flex;gap:8px">
+          <input class="fc" id="gistIdInput" value="${gistId}" placeholder="Вставь ID если синхронизируешь с другого устройства" style="flex:1">
+          <button class="btn btn-b" onclick="pasteInto('gistIdInput')" style="flex-shrink:0">📋</button>
+        </div>
       </div>
       <button class="btn btn-s btn-full" onclick="connectGistId()">Подключить этот Gist ID</button>
       <div class="div"></div>
